@@ -9,3 +9,8 @@ __pycache__/
 yc_founders*.json
 yc_founders*.csv
 *_apify_raw.json
+# Qualification exports and private strategy stay local.
+data/
+private-context/
+*.private.json
+research-cards*.json

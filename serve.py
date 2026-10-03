@@ -8,8 +8,14 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "api"))
 import yc
+import evaluate as card_api
 
 class Handler(SimpleHTTPRequestHandler):
+    def do_POST(self):
+        if self.path == "/api/evaluate":
+            return card_api.handler.do_POST(self)
+        return self.send_error(404)
+
     def do_GET(self):
         if self.path.startswith("/api/yc"):
             return yc.handler.do_GET(self)

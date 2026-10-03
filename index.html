@@ -1,335 +1,90 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><title>YC Founder Outreach</title>
-<meta name="description" content="Pick a YC batch, find founder emails, and write personalised cold emails from one template.">
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Founder Pipeline</title><meta name="description" content="Qualify small B2B companies before investing in founder outreach.">
 <style>
-:root{--bg:#f7f7f5;--card:#fff;--fg:#1c1c1a;--muted:#6b6b66;--line:#e4e3de;--accent:#e2561b;--ok:#1f8a4c;--warn:#a86b00;--err:#c0392b}
-@media (prefers-color-scheme:dark){:root{--bg:#141413;--card:#1e1e1c;--fg:#ecebe6;--muted:#9a998f;--line:#302f2b;--accent:#f07a45;--ok:#4cc27d;--warn:#e0a53a;--err:#e8705f}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 -apple-system,system-ui,"Segoe UI",sans-serif}
-main{max-width:860px;margin:0 auto;padding:32px 16px}h1{margin:0 0 4px;font-size:24px}h2{font-size:16px;margin:0 0 10px}
-p.sub{margin:0 0 20px;color:var(--muted)}a{color:var(--accent)}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px}
-label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
-input,select,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
-textarea{min-height:260px;resize:vertical;line-height:1.5}
-.ph{font-size:13px;color:var(--muted);margin:8px 0 0}.ph code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:0 5px;margin-right:4px;cursor:pointer}
-.row2{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}.row2 select,.row2 input{width:auto;flex:1;min-width:160px}
-.status{font-size:13px;color:var(--muted);margin:10px 0 0;min-height:1.5em}.status.err{color:var(--err)}
-.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:1;align-items:center}
-.bar input{flex:1;min-width:180px;width:auto;background:var(--card)}.bar select{width:auto;background:var(--card)}
-.chk{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--muted);white-space:nowrap}.chk input{width:auto}
-details{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px}details.sent{opacity:.55}
-summary{cursor:pointer;padding:12px 14px;display:flex;gap:10px;align-items:center;list-style:none}summary::-webkit-details-marker{display:none}
-summary::before{content:"▸";color:var(--muted)}details[open] summary::before{content:"▾"}
-.name{font-weight:600}.meta{color:var(--muted);font-size:13px;margin-left:auto;text-align:right}
-.badge{font-size:12px;padding:1px 8px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
-.valid{color:var(--ok)}.unknown,.guess{color:var(--warn)}.site{color:var(--accent)}.none{color:var(--muted)}
-.body{padding:0 14px 14px;border-top:1px solid var(--line)}.r{margin:10px 0 0;font-size:14px;overflow-wrap:anywhere}.r b{color:var(--muted);font-weight:500;display:inline-block;width:64px}
-.one{color:var(--muted);font-size:14px;margin:10px 0 0}
-pre{white-space:pre-wrap;font:inherit;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;margin:10px 0}
-.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-button,a.btn{font:inherit;font-size:13px;cursor:pointer;border-radius:8px;padding:6px 12px;border:1px solid var(--line);background:var(--card);color:var(--fg);text-decoration:none}
-button.primary{background:var(--accent);border-color:var(--accent);color:#fff}button:disabled{opacity:.5;cursor:default}
-a.lnk{color:var(--muted);font-size:13px}
-footer{color:var(--muted);font-size:13px;margin-top:32px}
+:root{--bg:#f6f5f1;--ink:#232824;--muted:#6b746d;--line:#dce0d9;--accent:#236047;--paper:white}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 system-ui,sans-serif}
+main{max-width:1160px;margin:auto;padding:38px 22px}header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
+h1{font-size:30px;letter-spacing:-1px;margin:0}h2{font-size:17px;margin:0 0 14px}p{margin:5px 0 15px}.muted{color:var(--muted)}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:20px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}button,.button{background:white;border:1px solid var(--line);border-radius:7px;padding:9px 13px;color:var(--ink);font:inherit;cursor:pointer;text-decoration:none}
+.primary{background:var(--accent);color:white;border-color:var(--accent)}button:disabled{opacity:.5;cursor:default}
+input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:6px;padding:9px;background:#fafbf9;color:var(--ink)}input[type=search]{flex:1;min-width:180px}
+.file{display:none}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}.metric{padding:15px;background:var(--paper);border:1px solid var(--line);border-radius:10px}.metric strong{display:block;font-size:26px}
+.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%}th{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);text-align:left}td,th{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:top}td:first-child{min-width:240px}td .muted{font-size:12px}tr:hover{background:#f5f8f4}.badge{display:inline-block;padding:2px 8px;border-radius:4px;background:#edf2ed;color:#335640;font-size:11px;white-space:nowrap}.reject{background:#f5e9e6;color:#984434}.hold{background:#f7f0dd;color:#846720}.review{background:#eef0f6;color:#52618d}
+.empty{text-align:center;padding:55px;color:var(--muted)}.status{min-height:22px;color:var(--muted);margin:12px 0 0}.error{color:#a23d32}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}textarea{width:100%;min-height:360px;font:12px/1.5 ui-monospace,monospace;resize:vertical}pre{white-space:pre-wrap;font:12px/1.5 ui-monospace,monospace;max-height:350px;overflow:auto;background:#f5f7f3;padding:14px;border-radius:7px}a{color:var(--accent)}#detail[hidden]{display:none}footer{font-size:12px;color:var(--muted);margin:26px 0}label{display:block;color:var(--muted);font-size:12px;margin:12px 0 5px}
+@media(max-width:720px){header{display:block}.metrics{grid-template-columns:1fr 1fr}.split{grid-template-columns:1fr}main{padding:20px 12px}.panel{padding:16px}}
 </style></head><body><main>
-<h1>YC Founder Outreach</h1>
-<p class="sub">Pick a YC batch, find founder emails, and write personalised cold emails from one template. Free without any keys; everything you type stays in your browser.</p>
-
-<section class="panel">
-  <h2>1. Your details</h2>
-  <div class="grid">
-    <label class="f">Your name<input data-k="my_name" placeholder="Jane Doe" autocomplete="name"></label>
-    <label class="f">Portfolio / website<input data-k="portfolio" placeholder="https://..."></label>
-    <label class="f">GitHub<input data-k="github" placeholder="https://github.com/..."></label>
-    <label class="f">Resume link<input data-k="resume" placeholder="https://..."></label>
-  </div>
-  <h2>2. Email template</h2>
-  <label class="f">Subject<input data-k="subject"></label>
-  <label class="f" style="margin-top:10px">Body<textarea data-k="body"></textarea></label>
-  <p class="ph" id="vars">Click to insert: <code>{first_name}</code><code>{company}</code><code>{one_liner}</code><code>{batch}</code><code>{my_name}</code><code>{portfolio}</code><code>{github}</code><code>{resume}</code>
-  &nbsp;<button id="reset" type="button">Reset template</button></p>
-  <p class="ph">Lines like <code>resume: {resume}</code> are dropped when you leave that field empty. Email labels: <span class="badge valid">verified</span> / <span class="badge unknown">unverified</span> come from Apify (step 4), <span class="badge site">on site</span> is listed on the company's website, <span class="badge guess">guess</span> is the most common pattern (right about 80% of the time) and may bounce.</p>
-</section>
-
-<section class="panel">
-  <h2>3. Pick a YC batch</h2>
-  <div class="row2">
-    <select id="batch" aria-label="YC batch"><option value="">Loading batches…</option></select>
-    <button id="load" class="primary" type="button" disabled>Load companies</button>
-  </div>
-  <p class="status" id="loadStatus"></p>
-</section>
-
-<section class="panel">
-  <h2>4. Find verified emails <span style="font-weight:400;color:var(--muted)">(optional)</span></h2>
-  <p class="ph" style="margin:0 0 10px">Without this you get emails listed on company sites plus pattern guesses like <code>first@domain</code> (right about 80% of the time). For verified emails, paste your own
-    <a href="https://console.apify.com/settings/integrations" target="_blank" rel="noopener">Apify API token</a>. Lookups run from your browser straight to Apify on your account; the token is never sent to this site's server and isn't saved.</p>
-  <div class="row2">
-    <label class="f" style="flex:2">Apify token<input id="token" type="password" placeholder="apify_api_..." autocomplete="off"></label>
-    <label class="f" style="flex:1">Max USD per run (50 founders)<input id="cap" type="number" min="0.1" step="0.1" value="1"></label>
-    <button id="enrich" type="button" disabled>Find emails</button>
-  </div>
-  <p class="status" id="enrichStatus"></p>
-</section>
-
-<div class="bar">
-  <input id="q" placeholder="Search company or founder" aria-label="Search">
-  <select id="st" aria-label="Email type"><option value="">All emails</option><option value="valid">Verified</option><option value="unknown">Unverified</option><option value="site">Found on site</option><option value="guess">Guess</option><option value="none">No email</option></select>
-  <label class="chk"><input type="checkbox" id="hideSent"> hide sent</label>
-  <button id="all" type="button">Expand all</button>
-</div>
-<p class="sub" id="shown" style="margin:0 0 10px"></p>
-<div id="list"></div>
-<p style="text-align:center"><button id="more" class="primary" type="button" hidden>Load more</button></p>
-<footer>Open source. Company and founder data comes from YC's public directory. Please write to people one at a time and respect "no".</footer>
-</main>
-<script>
-const DEFAULTS = {
-  my_name: "", portfolio: "", github: "", resume: "",
-  subject: "interested in {company}",
-  body: `Hey {first_name},
-
-saw {company} and {one_liner} really stood out.
-
-[1-2 lines about you: what you're doing now and what you've built]
-
-[1 line on relevant experience: stack, projects, open source]
-
-would love to explore if there's a role at {company}.
-
-- {my_name}
-portfolio: {portfolio}
-github: {github}
-resume: {resume}`
+<header><div><h1>Founder Pipeline</h1><p class="muted">Small B2B teams. One concrete workflow. A viable paid decision.</p></div><span class="badge">70% employment · 30% projects</span></header>
+<section class="panel"><h2>Discover before you enrich</h2>
+<div class="toolbar"><select id="batch" aria-label="YC batch"><option value="">Loading batches…</option></select><button id="load" class="primary" disabled>Screen batch</button>
+<button id="import">Import companies</button><input id="file" class="file" type="file" accept=".json,application/json"><button id="export">Export workspace</button></div>
+<p class="status" id="status">Default discovery: team of 1–5, YC 2025 onward. Unknown team size stays explicit. Other ecosystems can be imported.</p></section>
+<div class="metrics" id="metrics"></div>
+<section class="panel"><div class="toolbar"><input id="q" type="search" placeholder="Company, workflow or domain" aria-label="Search companies"><select id="state" aria-label="Screen state"><option value="">All screens</option><option value="research" selected>Research candidates</option><option value="review">Review relevance</option><option value="hold">IP hold</option><option value="reject">Rejected</option></select><button id="packets">Export research packets</button></div>
+<div class="table-wrap"><table><thead><tr><th>Company / workflow</th><th>Team</th><th>Lane</th><th>Screen</th><th>Next step</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<section id="detail" class="panel" hidden><div class="toolbar"><h2 id="detailTitle" style="flex:1;margin:0"></h2><button id="close">Close</button></div><p id="detailMeta" class="muted"></p>
+<div class="toolbar"><button id="enrich">Load founder profiles</button><button id="packet">Copy research prompt</button><button id="saveCard" class="primary">Save and evaluate card</button></div>
+<p id="contacts" class="muted"></p><p id="cardStatus" class="status"></p>
+<div class="split"><div><label for="card">Company-specific research card</label><textarea id="card" spellcheck="false"></textarea></div><div><label>Independent employment / project decision</label><pre id="evaluation">Complete the gates with original sources and dated checks.</pre><label>Reviewed draft</label><pre id="draft">No draft yet.</pre><button id="copyDraft" disabled>Copy reviewed draft</button></div></div></section>
+<footer>Directory matches are research leads. Funding, remote labels and guessed emails do not establish a viable opportunity. Workspace saved in this browser; export a backup. No messages are sent.</footer>
+</main><script>
+const KEY='founder-pipeline-v1', $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl=s=>/^https?:\/\//i.test(s||'')?s:'';
+const date=()=>new Date().toISOString().slice(0,10);
+let workspace={companies:[],cards:{}}, active=null, evaluationRequest=0;
+try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved?.companies&&saved?.cards)workspace=saved}catch{}
+const status=(msg,error=false)=>{$('status').textContent=msg;$('status').classList.toggle('error',error)};
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(workspace))}catch{status('Browser storage is full. Export your workspace now.',true)}}
+async function api(params){const r=await fetch('/api/yc?'+new URLSearchParams(params));const j=await r.json();if(!r.ok)throw Error(j.error||r.status);return j}
+function download(name,text){const blob=new Blob([text],{type:'application/json'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
+function render(){
+ const all=workspace.companies,q=$('q').value.toLowerCase(),state=$('state').value;
+ $('metrics').innerHTML=[['Companies screened',all.length],['Research candidates',all.filter(c=>c.screen.state==='research').length],['IP holds',all.filter(c=>c.screen.state==='hold').length],['Cards researched',Object.keys(workspace.cards).length]].map(([label,n])=>`<div class="metric"><strong>${n}</strong><span class="muted">${label}</span></div>`).join('');
+ const rows=all.filter(c=>(!state||c.screen.state===state)&&(!q||JSON.stringify([c.name,c.one_liner,c.website]).toLowerCase().includes(q)));
+ $('rows').innerHTML=rows.length?rows.map(c=>`<tr><td><strong>${esc(c.name)}</strong><div class="muted">${esc(c.one_liner)}</div>${safeUrl(c.website)?`<a href="${esc(c.website)}" target="_blank" rel="noopener">${esc(c.id)}</a>`:''}</td><td>${esc(c.team_size??'Unknown')}</td><td>${esc(c.screen.lane.replaceAll('_',' '))}</td><td><span class="badge ${esc(c.screen.state)}">${esc(c.screen.state)}</span><div class="muted">${esc([...c.screen.reasons,...c.screen.holds,...c.screen.unknowns].join('; '))}</div></td><td><button data-id="${esc(c.id)}">${workspace.cards[c.id]?'Review card':'Research'}</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">No companies in this view. Screen a batch or import directory data.</td></tr>';
+}
+function show(c){evaluationRequest++;active=c;$('detail').hidden=false;$('detailTitle').textContent=c.name;$('detailMeta').textContent=`${c.source} · ${c.batch||'Imported'} · ${c.screen.state} · screen checked ${c.screen.checked_at}`;$('card').value=JSON.stringify(workspace.cards[c.id]||blankCard(c),null,2);$('contacts').textContent='';$('cardStatus').textContent='';$('evaluation').textContent='Add original sources and current checks. Unknown gates remain unknown.';$('draft').textContent='No reviewed draft yet.';$('copyDraft').disabled=true;$('enrich').disabled=c.screen.state!=='research'||!c.slug;$('detail').scrollIntoView({behavior:'smooth',block:'start'})}
+async function serverEvaluate(card){
+ // The same stateless validator runs locally and as a serverless function.
+ const r=await fetch('/api/evaluate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(card)});
+ if(!r.ok){const j=await r.json().catch(()=>({}));throw Error(j.error||'Run pipeline.py evaluate on exported cards to validate this workspace.')}
+ return r.json();
+}
+const factors=['severity','match','proof','urgency','access','budget','geography','role','project','differentiation','competition','upside','efficiency'];
+function blankCard(c){return {company_id:c.id,company:c.name,researched_at:date(),observed_condition:'',hypothesis:'',already_shipped_check:'',alternative_explanation:'',falsification_question:'',why_this_month:'',matched_claim:'',permitted_proof:'',claim_limit:'',contact:{name:'',route:'',source:{}},routes:Object.fromEntries(['employment','project'].map(r=>[r,{gates:Object.fromEntries(['geography','budget','need','authority','timing','depth','reviewer','ip'].map(g=>[g,{state:'unknown',evidence:{}}])),ratings:Object.fromEntries(factors.map(k=>[k,{value:1,rationale:'',evidence:{}}])),penalties:[],notes:''}])),next_action:'',due_date:'',draft:{subject:'',body:'',sources_rechecked_at:'',claim_reviewed:false}}}
+function packet(c){return `Research ${c.name} for a Pakistan-based Product Engineer for B2B workflows. Prioritize paid product-area roles (70% effort) and scoped projects (30%).\n\nUse original current sources: careers, product, docs, changelog, pricing, founder posts. Directory matching is discovery only. Check actual team, already-shipped features and existing owners. Remote/EMEA/funding does not prove Pakistan eligibility or allocated budget. Record claim, original URL, publication/event/check dates separately. Never infer missing features from public absence. Separate employment and project feasibility; do not relabel a restricted job a project. Direct receivables work stays held until IP clearance.\n\nProduce an observed condition, hypothesis, alternative explanation, falsification question, one matched contribution and permitted proof. Do not claim measured business gains, sole authorship, senior backend depth or production AI expertise. No private employer materials, salary floor or unconsented references. Contact via verified public work channels only; guessed emails are excluded. Start with a 15-minute qualification screen and stop at hard blockers. No sending or custom implementation.\n\nReturn completed card JSON. Evidence: {"claim":"exact sourced fact","url":"https://original-source","checked_at":"YYYY-MM-DD","published_at":null,"event_at":null}. Gate states: pass/reject/unknown. Ratings: 0–4 with rationale and evidence, unknown=1.\n\nCompany:\n${JSON.stringify({id:c.id,name:c.name,website:c.website,yc_url:c.yc_url,one_liner:c.one_liner,description:c.description,team_size:c.team_size,batch:c.batch,screen:c.screen},null,2)}\n\nCard:\n${JSON.stringify(blankCard(c),null,2)}`}
+$('load').onclick=async()=>{const b=$('batch').value;if(!b)return;$('load').disabled=true;status('Screening directory data before founder enrichment…');try{const rows=await api({action:'screen',batch:b});const map=new Map(workspace.companies.map(c=>[c.id,c]));rows.forEach(c=>map.set(c.id,c));workspace.companies=[...map.values()];persist();render();status(`Screened ${rows.length} companies. Research candidates still require live need and country checks.`)}catch(e){status(e.message,true)}finally{$('load').disabled=false}};
+$('rows').onclick=e=>{const b=e.target.closest('[data-id]');if(b)show(workspace.companies.find(c=>c.id===b.dataset.id))};
+$('q').oninput=render;$('state').onchange=render;$('close').onclick=()=>{evaluationRequest++;$('detail').hidden=true};
+$('import').onclick=()=>$('file').click();
+$('file').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(data.companies&&data.cards){if(!Array.isArray(data.companies)||!data.companies.every(c=>c.id&&c.screen))throw Error('Invalid workspace');workspace=data}else if(Array.isArray(data)&&data.every(c=>c.id&&c.screen)){const map=new Map(workspace.companies.map(c=>[c.id,c]));data.forEach(c=>map.set(c.id,c));workspace.companies=[...map.values()]}else if(Array.isArray(data)&&data.every(c=>c.company_id)){data.forEach(c=>workspace.cards[c.company_id]=c)}else throw Error('Import companies.json, cards.json or a workspace export. Raw imports: run pipeline.py screen --input first.');persist();render();status('Imported workspace data.')}catch(e){status(e.message,true)}finally{e.target.value=''}};
+$('export').onclick=()=>download(`founder-workspace-${date()}.json`,JSON.stringify(workspace,null,2));
+$('packets').onclick=()=>download(`research-packets-${date()}.json`,JSON.stringify(workspace.companies.filter(c=>c.screen.state==='research').map(c=>({company_id:c.id,prompt:packet(c)})),null,2));
+$('packet').onclick=async()=>{try{await navigator.clipboard.writeText(packet(active));$('cardStatus').textContent='Research prompt copied.'}catch(e){$('cardStatus').textContent='Clipboard unavailable. Export the research packets.'}};
+$('enrich').onclick=async()=>{const c=active;$('enrich').disabled=true;$('contacts').textContent='Loading founder profiles…';try{const [r]=await api({action:'profiles',slugs:c.slug});if(r.error)throw Error(r.error);c.founders=r.founders;c.contact_checked_at=date();persist();if(active.id!==c.id)return;$('contacts').replaceChildren();for(const f of r.founders||[]){const line=document.createElement('p');line.textContent=f.name+(f.title?' · '+f.title:'');for(const [label,u] of [['LinkedIn',f.linkedin],['X',f.twitter]])if(safeUrl(u)){const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.textContent=' '+label;line.append(a)}$('contacts').append(line)}$('contacts').append(document.createTextNode('Confirm hiring authority and the intended contact channel. No guessed emails are used.'))}catch(e){if(active.id===c.id)$('contacts').textContent=e.message}finally{if(active.id===c.id)$('enrich').disabled=false}};
+$('saveCard').onclick=async()=>{
+ const companyId=active.id, request=++evaluationRequest;
+ const isCurrent=()=>active.id===companyId&&request===evaluationRequest&&!$('detail').hidden;
+ $('copyDraft').disabled=true;
+ try{
+  const card=JSON.parse($('card').value);
+  if(card.company_id!==companyId)throw Error('Card belongs to another company');
+  workspace.cards[companyId]=card;persist();render();
+  const result=await serverEvaluate(card);
+  // Switching panels or starting another save invalidates both successes and errors.
+  if(!isCurrent())return;
+  $('evaluation').textContent=JSON.stringify(result,null,2);
+  $('draft').textContent=result.draft_ready?`${card.draft.subject}\n\n${card.draft.body}`:'Draft held. Complete card fields, verify the contact, recheck sources within 48h and complete claim review.';
+  $('copyDraft').disabled=!result.draft_ready;
+  $('cardStatus').textContent='Saved and evaluated. Nothing sent.';
+ }catch(e){
+  if(!isCurrent())return;
+  $('cardStatus').textContent=e.message;$('copyDraft').disabled=true;
+ }
 };
-const KEY = "yc-outreach-v2";
-const ACTOR = "snipercoder~email-finder-by-name-and-domain";
-const APIFY = "https://api.apify.com/v2";
-const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
-                set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} } };
-let tpl = Object.assign({}, DEFAULTS, store.get(KEY, {}));
-let sent = new Set(store.get(KEY + "-sent", []));
-let ALL = [], DATA = [], batch = "";
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const url = s => /^https?:\/\//i.test(s || "") ? esc(s) : "";
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-const say = (id, msg, err) => { $(id).textContent = msg; $(id).classList.toggle("err", !!err) };
-
-async function api(params) {
-  const r = await fetch("/api/yc?" + new URLSearchParams(params));
-  const j = await r.json().catch(() => ({ error: `HTTP ${r.status}` }));
-  if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
-  return j;
-}
-
-// Best email for a founder: verified > unverified (Apify) > on the company site > pattern guess
-function best(f) {
-  if (f.apify_email) return { email: f.apify_email, kind: f.apify_status === "valid" ? "valid" : "unknown", label: f.apify_status === "valid" ? "verified" : "unverified" };
-  if (f.emails_found?.length) return { email: f.emails_found[0], kind: "site", label: "on site" };
-  if (f.email_guesses?.length) return { email: f.email_guesses[0], kind: "guess", label: "guess" };
-  return { email: "", kind: "none", label: "no email" };
-}
-const RANK = { valid: 0, unknown: 1, site: 2, guess: 3, none: 4 };
-// Primary contact: best email first, then CEO
-function contacts(c) {
-  return [...(c.founders || [])].sort((a, b) => (RANK[best(a).kind] - RANK[best(b).kind]) || (!/ceo/i.test(a.title) - !/ceo/i.test(b.title)));
-}
-
-function fill(text, c) {
-  const f = contacts(c)[0] || { name: "" };
-  const vars = { first_name: f.name.split(" ")[0] || "there", company: c.name, one_liner: (c.one_liner || "what you're building").replace(/\.$/, "").toLowerCase(),
-                 batch: c.batch, my_name: tpl.my_name, portfolio: tpl.portfolio, github: tpl.github, resume: tpl.resume };
-  const out = text.replace(/\{(\w+)\}/g, (m, k) => k in vars ? vars[k] : m);
-  return out.split("\n").filter(l => !/^\s*[\w ]+:\s*$/.test(l)).join("\n");
-}
-
-function render() {
-  $("list").innerHTML = DATA.map((c, i) => {
-    const fs = contacts(c), f = fs[0], b = f ? best(f) : { kind: c.founders ? "none" : "", label: c.error ? "error" : c.founders ? "no email" : "loading…" };
-    const key = (c.name + " " + fs.map(o => o.name).join(" ")).toLowerCase();
-    return `<details data-i="${i}" data-k="${esc(key)}" data-s="${b.kind}" class="${sent.has(c.name) ? "sent" : ""}">
-      <summary><span class="name">${esc(c.name)}</span><span class="badge ${b.kind || "none"}">${esc(b.label)}</span>
-      <span class="meta">${esc(f?.name || "")}<br>${esc(c.batch)}</span></summary>
-      <div class="body">
-        <p class="one">${esc(c.one_liner)}${url(c.website) ? ` · <a class="lnk" href="${url(c.website)}" target="_blank" rel="noopener">website</a>` : ""} · <a class="lnk" href="https://www.ycombinator.com/companies/${esc(c.slug)}" target="_blank" rel="noopener">YC</a>${url(f?.linkedin) ? ` · <a class="lnk" href="${url(f.linkedin)}" target="_blank" rel="noopener">LinkedIn</a>` : ""}${url(f?.twitter) ? ` · <a class="lnk" href="${url(f.twitter)}" target="_blank" rel="noopener">X</a>` : ""}</p>
-        ${c.error ? `<p class="status err">${esc(c.error)}</p>` : ""}
-        ${fs.map(o => { const e = best(o); return `<div class="r"><b>${o === f ? "To" : "Also"}</b>${esc(o.name)}${o.title ? ` (${esc(o.title)})` : ""} · ${esc(e.email || "no email")} <span class="badge ${e.kind}">${e.label}</span></div>` }).join("")}
-        <div class="r"><b>Subject</b><span class="subj"></span></div>
-        <pre></pre>
-        <div class="acts">
-          <button class="primary" data-a="body" type="button">Copy body</button><button data-a="to" type="button">Copy email</button><button data-a="subject" type="button">Copy subject</button>
-          <a class="btn mail" href="#">Open in mail app</a>
-          <label class="chk"><input type="checkbox" data-a="sent" ${sent.has(c.name) ? "checked" : ""}> sent</label>
-        </div>
-      </div></details>`;
-  }).join("");
-  update();
-  filter();
-}
-
-// Fill drafts lazily when opened, and refresh open ones when the template changes
-function draft(d) {
-  const c = DATA[d.dataset.i], to = contacts(c)[0], subject = fill(tpl.subject, c), body = fill(tpl.body, c);
-  d.querySelector(".subj").textContent = subject;
-  d.querySelector("pre").textContent = body;
-  d.querySelector(".mail").href = `mailto:${encodeURIComponent(to ? best(to).email : "")}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
-function update() { document.querySelectorAll("details[open]").forEach(draft) }
-
-function filter() {
-  const q = $("q").value.trim().toLowerCase(), st = $("st").value, hide = $("hideSent").checked;
-  let n = 0;
-  document.querySelectorAll("details").forEach(d => {
-    const ok = (!q || d.dataset.k.includes(q)) && (!st || d.dataset.s === st) && !(hide && d.classList.contains("sent"));
-    d.style.display = ok ? "" : "none"; n += ok;
-  });
-  $("shown").textContent = DATA.length ? `${n} of ${DATA.length} shown · ${sent.size} sent` : "";
-}
-
-// ALL = every company in the batch; DATA = the ones whose founders are loaded (what the list shows)
-const PAGE = 20;
-const save = () => store.set(`${KEY}-batch-${batch}`, ALL);
-const busy = on => { $("load").disabled = $("more").disabled = on; $("enrich").disabled = on || !DATA.length };
-function progress() {
-  const left = ALL.length - DATA.length, failed = DATA.filter(c => c.error).length;
-  say("loadStatus", `${DATA.length} of ${ALL.length} companies loaded${failed ? `, ${failed} couldn't be loaded` : ""}.`, failed > 0);
-  $("more").hidden = !left;
-  $("more").textContent = `Load ${Math.min(PAGE, left)} more (${left} left)`;
-}
-
-async function loadBatch() {
-  batch = $("batch").value;
-  if (!batch) return;
-  busy(true);
-  ALL = store.get(`${KEY}-batch-${batch}`, null) || [];
-  try {
-    if (!ALL.length) {
-      say("loadStatus", "Loading companies…");
-      ALL = (await api({ action: "companies", batch })).sort((a, b) => b.launched_at - a.launched_at);
-      save();
-    }
-  } catch (e) {
-    busy(false);
-    return say("loadStatus", `Couldn't load this batch: ${e.message}`, true);
-  }
-  DATA = ALL.filter(c => c.founders || c.error);
-  render();
-  if (!DATA.length) return loadMore();
-  progress(); busy(false);
-}
-
-// Founders come from each company's YC page, so load them PAGE at a time: 10 per request, 2 requests at once
-async function loadMore() {
-  const next = ALL.filter(c => !c.founders && !c.error).slice(0, PAGE);
-  if (!next.length) return progress();
-  busy(true);
-  const chunks = [];
-  for (let i = 0; i < next.length; i += 10) chunks.push(next.slice(i, i + 10));
-  say("loadStatus", `Loading founders for ${next.length} companies…`);
-  await Promise.all(chunks.map(async chunk => {
-    try {
-      const res = await api({ action: "founders", slugs: chunk.map(c => c.slug).join(",") });
-      res.forEach((r, j) => Object.assign(chunk[j], r));
-    } catch (e) { chunk.forEach(c => c.error = `Couldn't load founders: ${e.message}`) }
-    DATA = ALL.filter(c => c.founders || c.error);
-    render();
-  }));
-  save(); progress(); busy(false);
-}
-
-async function apify(method, path, token, body) {
-  const r = await fetch(APIFY + path, { method, headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-                                        body: body ? JSON.stringify(body) : undefined });
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error?.message || `Apify HTTP ${r.status}`);
-  return j;
-}
-
-async function enrich() {
-  const token = $("token").value.trim(), cap = Math.max(0.1, +$("cap").value || 1);
-  if (!token) return say("enrichStatus", "Paste your Apify token first.", true);
-  const people = DATA.flatMap(c => (c.founders || []).filter(f => f.name && c.domain && !f.apify_checked).map(f => ({ f, name: f.name, domain: c.domain })));
-  if (!people.length) return say("enrichStatus", "Nothing left to look up in this batch.");
-  const runs = Math.ceil(people.length / 50);
-  if (!confirm(`Look up ${people.length} founders on your Apify account? That's ${runs} run${runs > 1 ? "s" : ""}, each capped at $${cap}.`)) return;
-  busy(true);
-  let found = 0;
-  try {
-    // Large single runs crash the actor, so send 50 at a time and keep results as each finishes
-    for (let i = 0; i < people.length; i += 50) {
-      const chunk = people.slice(i, i + 50);
-      say("enrichStatus", `Run ${i / 50 + 1}/${runs}: starting…`);
-      let run = (await apify("POST", `/acts/${ACTOR}/runs?maxTotalChargeUsd=${cap}&memory=1024`, token,
-                             { names: chunk.map(p => p.name), domains: chunk.map(p => p.domain) })).data;
-      while (["READY", "RUNNING"].includes(run.status)) {
-        say("enrichStatus", `Run ${i / 50 + 1}/${runs}: ${run.status.toLowerCase()}…`);
-        await sleep(5000);
-        run = (await apify("GET", `/actor-runs/${run.id}`, token)).data;
-      }
-      if (run.status !== "SUCCEEDED") throw new Error(`Apify run ended as ${run.status}`);
-      const items = await apify("GET", `/datasets/${run.defaultDatasetId}/items?clean=true&format=json`, token);
-      for (const p of chunk) {
-        const hit = items.find(it => it.Found && it.Email && String(it.Name).toLowerCase() === p.name.toLowerCase() && String(it.Domain).toLowerCase() === p.domain);
-        p.f.apify_checked = true;
-        if (hit) { p.f.apify_email = String(hit.Email).toLowerCase(); p.f.apify_status = hit.Validation || ""; found++ }
-      }
-      save(); render();
-    }
-    say("enrichStatus", `Done: found ${found} of ${people.length} emails.`);
-  } catch (e) {
-    say("enrichStatus", `Stopped: ${e.message}. Found ${found} so far; press again to continue.`, true);
-  } finally {
-    busy(false);
-  }
-}
-
-$("list").addEventListener("toggle", e => { if (e.target.open) draft(e.target) }, true);
-$("list").addEventListener("click", e => {
-  const b = e.target.closest("[data-a]"); if (!b) return;
-  const d = b.closest("details"), c = DATA[d.dataset.i];
-  if (b.dataset.a === "sent") {
-    b.checked ? sent.add(c.name) : sent.delete(c.name);
-    d.classList.toggle("sent", b.checked); store.set(KEY + "-sent", [...sent]); filter(); return;
-  }
-  const to = contacts(c)[0];
-  const txt = b.dataset.a === "body" ? d.querySelector("pre").textContent : b.dataset.a === "subject" ? d.querySelector(".subj").textContent : to ? best(to).email : "";
-  navigator.clipboard.writeText(txt).then(() => { const o = b.textContent; b.textContent = "Copied"; setTimeout(() => b.textContent = o, 1200) });
-});
-["q", "st", "hideSent"].forEach(id => $(id).addEventListener(id === "q" ? "input" : "change", filter));
-$("all").onclick = e => {
-  const open = e.target.textContent === "Expand all";
-  document.querySelectorAll("details").forEach(d => { if (d.style.display !== "none") d.open = open });
-  e.target.textContent = open ? "Collapse all" : "Expand all";
-};
-document.querySelectorAll("[data-k]").forEach(el => {
-  if (!(el.dataset.k in tpl)) return;
-  el.value = tpl[el.dataset.k];
-  el.addEventListener("input", () => { tpl[el.dataset.k] = el.value; store.set(KEY, tpl); update(); });
-});
-let lastField = document.querySelector('textarea[data-k="body"]');
-document.querySelectorAll('input[data-k="subject"], textarea[data-k="body"]').forEach(el => el.addEventListener("focus", () => lastField = el));
-$("vars").addEventListener("click", e => {
-  if (e.target.tagName !== "CODE") return;
-  const el = lastField, s = el.selectionStart ?? el.value.length;
-  el.value = el.value.slice(0, s) + e.target.textContent + el.value.slice(el.selectionEnd ?? s);
-  el.focus(); el.selectionStart = el.selectionEnd = s + e.target.textContent.length;
-  el.dispatchEvent(new Event("input"));
-});
-$("reset").onclick = () => {
-  tpl.subject = DEFAULTS.subject; tpl.body = DEFAULTS.body; store.set(KEY, tpl);
-  document.querySelector('[data-k="subject"]').value = tpl.subject; document.querySelector('[data-k="body"]').value = tpl.body; update();
-};
-$("load").onclick = loadBatch;
-$("more").onclick = loadMore;
-$("enrich").onclick = enrich;
-$("batch").onchange = () => store.set(KEY + "-last", $("batch").value);
-
-api({ action: "batches" }).then(bs => {
-  const last = store.get(KEY + "-last", "");
-  $("batch").innerHTML = bs.filter(b => b.batch !== "Unspecified")
-    .map(b => `<option value="${esc(b.batch)}" ${b.batch === last ? "selected" : ""}>${esc(b.batch)} (${b.count} companies)</option>`).join("");
-  $("load").disabled = false;
-}).catch(e => { $("batch").innerHTML = "<option value=''>Couldn't load batches</option>"; say("loadStatus", e.message, true) });
+$('copyDraft').onclick=()=>navigator.clipboard.writeText($('draft').textContent);
+render();
+api({action:'batches'}).then(bs=>{$('batch').innerHTML=bs.filter(b=>/202[56]/.test(b.batch)).map(b=>`<option value="${esc(b.batch)}">${esc(b.batch)} (${b.count})</option>`).join('');$('load').disabled=false}).catch(e=>{$('batch').innerHTML='<option value="">YC currently unavailable</option>';status('YC lookup failed: '+e.message+'. Imports and existing workspace remain available.',true)});
 </script></body></html>

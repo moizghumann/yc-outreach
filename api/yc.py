@@ -37,7 +37,11 @@ def get(url, timeout=8, data=None, headers=None):
 def algolia(params):
     global _algolia
     if not _algolia:
-        m = re.search(r'window\.AlgoliaOpts = \{"app":"(\w+)","key":"([^"]+)"', get("https://www.ycombinator.com/companies") or "")
+        # The directory sometimes exceeds the general 8-second fetch budget.
+        page = get("https://www.ycombinator.com/companies", timeout=15)
+        if not page:
+            page = get("https://www.ycombinator.com/companies", timeout=15)
+        m = re.search(r'window\.AlgoliaOpts\s*=\s*\{\s*"app"\s*:\s*"(\w+)"\s*,\s*"key"\s*:\s*"([^"]+)"', page or "")
         if not m:
             raise RuntimeError("Could not read YC's company search")
         _algolia = m.group(1), m.group(2)
@@ -72,7 +76,9 @@ def companies(batch):
             break
     return [{"name": h["name"], "slug": h["slug"], "batch": h.get("batch"), "website": h.get("website") or "",
              "one_liner": h.get("one_liner") or "", "industry": h.get("subindustry") or "", "team_size": h.get("team_size"),
-             "launched_at": h.get("launched_at") or 0} for h in hits]
+             "launched_at": h.get("launched_at") or 0, "description": h.get("long_description") or "",
+             "tags": h.get("tags") or [], "location": h.get("all_locations") or "",
+             "status": h.get("status") or "", "is_hiring": h.get("isHiring", False)} for h in hits]
 
 
 def domain_of(website):
@@ -112,7 +118,7 @@ def resolves(domain):
         return False
 
 
-def founders(slug):
+def founders(slug, profiles_only=False):
     page = get(f"https://www.ycombinator.com/companies/{slug}")
     m = re.search(r'data-page="([^"]*)"', page or "")
     if not m:
@@ -121,10 +127,10 @@ def founders(slug):
     website = c.get("website") or ""  # always from YC, never from the client
     domain = domain_of(website)
     try:
-        emails = _pool.submit(site_emails, website, domain).result(timeout=SITE_DEADLINE) if domain else []
+        emails = _pool.submit(site_emails, website, domain).result(timeout=SITE_DEADLINE) if domain and not profiles_only else []
     except cf.TimeoutError:
         emails = []  # ponytail: slow site skipped, guesses still cover it; the CLI waits longer
-    dns = resolves(domain) if domain else False
+    dns = resolves(domain) if domain and not profiles_only else False
     out = []
     for f in c.get("founders", []):
         name = f.get("full_name") or ""
@@ -133,6 +139,9 @@ def founders(slug):
                     "twitter": f.get("twitter_url") or "",
                     "emails_found": [e for e in emails if first and e.split("@")[0].startswith(first)],
                     "email_guesses": guesses(name, domain) if dns else []})
+    if profiles_only:
+        return {"slug": slug, "source_url": f"https://www.ycombinator.com/companies/{slug}",
+                "founders": [{k: f[k] for k in ("name", "title", "linkedin", "twitter")} for f in out]}
     return {"slug": slug, "website": website, "domain": domain, "linkedin": c.get("linkedin_url") or "",
             "twitter": c.get("twitter_url") or "", "site_emails": emails, "founders": out}
 
@@ -147,12 +156,19 @@ def route(query):
         if not BATCH_RE.match(batch):
             return 400, {"error": "Invalid batch"}, 0
         return 200, companies(batch), 3600
-    if action == "founders":
+    if action == "screen":
+        # Fixed YC batches only; no arbitrary URL fetching or personal profile sent to the server.
+        from prospecting import screen_all
+        batch = (q.get("batch") or [""])[0]
+        if not BATCH_RE.match(batch):
+            return 400, {"error": "Invalid batch"}, 0
+        return 200, screen_all(companies(batch)), 3600
+    if action in ("founders", "profiles"):
         slugs = [s for s in (q.get("slugs") or [""])[0].split(",") if s]
         if not slugs or len(slugs) > MAX_SLUGS or not all(SLUG_RE.match(s) for s in slugs):
             return 400, {"error": f"Pass 1-{MAX_SLUGS} valid slugs"}, 0
         with cf.ThreadPoolExecutor(len(slugs)) as ex:
-            return 200, list(ex.map(founders, slugs)), 86400
+            return 200, list(ex.map(lambda s: founders(s, profiles_only=action == "profiles"), slugs)), 86400
     return 400, {"error": "Unknown action"}, 0
 
 

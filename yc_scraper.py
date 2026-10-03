@@ -36,7 +36,7 @@ def get(url, timeout=15, data=None, headers=None):
 
 def algolia_key():
     page = get("https://www.ycombinator.com/companies")
-    m = re.search(r'window\.AlgoliaOpts = \{"app":"(\w+)","key":"([^"]+)"', page or "")
+    m = re.search(r'window\.AlgoliaOpts\s*=\s*\{\s*"app"\s*:\s*"(\w+)"\s*,\s*"key"\s*:\s*"([^"]+)"', page or "")
     if not m:
         sys.exit("Could not find Algolia key on YC companies page")
     return m.group(1), m.group(2)
@@ -50,7 +50,10 @@ def list_companies(batches):
     while True:
         params = urllib.parse.urlencode({"hitsPerPage": 1000, "page": page, "facetFilters": facet})
         body = json.dumps({"params": params}).encode()
-        res = json.loads(get(url, data=body, headers={"X-Algolia-Application-Id": app, "X-Algolia-API-Key": key}))
+        response = get(url, data=body, headers={"X-Algolia-Application-Id": app, "X-Algolia-API-Key": key})
+        if response is None:
+            raise RuntimeError("YC company search failed; no partial export was written")
+        res = json.loads(response)
         hits += res["hits"]
         page += 1
         if page >= res["nbPages"]:
