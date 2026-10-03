@@ -2,7 +2,7 @@
 
 An evidence-aware fork of YC Outreach for finding small B2B teams with a plausible paid product-area role or scoped project. Standard library only, Python 3.9+, no API key and no build step.
 
-The default screen targets teams of 1–5 in YC batches from 2025–2026. Directory keywords identify research candidates; they do not establish hiring demand, Pakistan eligibility, budget or missing features. Unknowns stay explicit. Direct receivables companies are held for competition/IP clearance. The effort target is 70% employment and 30% scoped projects.
+The default screen targets teams of 1–5 in YC batches from 2025–2026. Directory keywords identify research candidates; they do not establish hiring demand, budget or missing features. Unknowns stay explicit. Direct receivables companies are held for competition/IP clearance. The effort target is 70% employment and 30% scoped projects.
 
 ## Run
 
@@ -37,15 +37,15 @@ python3 pipeline.py evaluate --input research-cards.json --out data/evaluated.js
 
 A screen writes all deduplicated company records, `companies.csv`, `summary.json`, blank cards, and individual research prompts. It preserves rejections and holds. `--known` accepts an array of canonical IDs or company names and skips those companies when generating fresh research packets. Import `companies.json` or completed `cards.json` into the browser. Raw non-YC inputs must be arrays of objects with a name; include website, source, team_size, industry, description and a source URL when available. Missing team size or batch does not fabricate a pass or rejection.
 
-Research prompts are handoffs for a human or research-capable agent. This version does **not** independently perform deep web research, verify source contents, discover all non-YC ecosystems, or prove that a current role accepts Pakistan. No LLM service is required. Fill cards from original current pages; review interpretations before drafting. Existing spreadsheet trackers can ingest the CSV, but this release does not modify them automatically.
+Research prompts are handoffs for a human or research-capable agent. This version does **not** independently perform deep web research, verify source contents, discover all non-YC ecosystems. No LLM service is required. Fill cards from original current pages; review interpretations before drafting. Existing spreadsheet trackers can ingest the CSV, but this release does not modify them automatically.
 
 ## Qualification rules
 
-The engine implements the Acquisition Toolkit's 13-factor, 100-point scoring model, with distinct employment E and project P scores and neutral base B. Route gates are independent: geography, budget, need, authority, timing, depth, reviewer and IP. A blocked role never automatically qualifies a project.
+Per the current search preference, the engine excludes geography from the Acquisition Toolkit model and normalizes the remaining 12 factors (90 raw points) to 100, preserving their relative weights, with distinct employment E and project P scores and neutral base B. Route gates are independent: budget, need, authority, timing, depth, reviewer and IP. A blocked role never automatically qualifies a project.
 
-Evidence requires a claim, original HTTP(S) URL and check date. Gate evidence older than 30 days becomes unknown; rating evidence older than 90 days defaults to 1. These are metadata checks, **not factual source verification**. Source event and publication dates can be recorded separately. A funding announcement does not prove salary budget; remote or EMEA does not establish Pakistan eligibility.
+Evidence requires a claim, original HTTP(S) URL and check date. Gate evidence older than 30 days becomes unknown; rating evidence older than 90 days defaults to 1. These are metadata checks, **not factual source verification**. Source event and publication dates can be recorded separately. A funding announcement does not prove salary budget. Location and work arrangement remain factual context only; they do not affect gates, ratings or caps. Legacy geography fields are ignored.
 
-Unknown budget or geography caps priority at 59, both unknown at 49, and unconfirmed need at 54. Hard blockers override scores. Penalties apply once each. Unresolved gates stay at L1. No score automatically authorizes a custom implementation or predicts a close.
+Unknown budget caps priority at 59, and unconfirmed need at 54. Hard blockers override scores. Penalties apply once each. Unresolved gates stay at L1. No score automatically authorizes a custom implementation or predicts a close.
 
 Drafts are typed per company. Copy unlocks only with a complete card, verified contact evidence, live-source recheck within 48 hours, explicit claim review and a body of at most 140 words. Qualification drafts may ask about unresolved gates; they must not present unknown conditions as confirmed. There is no automatic Sent state.
 

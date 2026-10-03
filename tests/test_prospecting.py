@@ -71,8 +71,8 @@ class QualificationTests(unittest.TestCase):
         c.pop('slug')
         self.assertEqual(screen(c)['screen']['state'], 'research')
 
-    def test_weights_sum_to_100(self):
-        self.assertEqual(sum(WEIGHTS.values()), 100)
+    def test_remaining_weights_sum_to_90(self):
+        self.assertEqual(sum(WEIGHTS.values()), 90)
 
     def test_full_ratings(self):
         s = score_route(route(), 'employment', DAY)
@@ -80,24 +80,32 @@ class QualificationTests(unittest.TestCase):
 
     def test_toolkit_formula(self):
         r = route()
-        values = [4,4,3,4,3,3,4,2,4,4,3,3,4]
+        values = [4,4,3,4,3,3,2,4,4,3,3,4]
         for k, v in zip(WEIGHTS, values):
             r['ratings'][k]['value'] = v
-        self.assertEqual(score_route(r, 'employment', DAY)['E'], 86)
-        self.assertEqual(score_route(r, 'project', DAY)['P'], 91)
-        self.assertEqual(score_route(r, 'employment', DAY)['B'], 88.5)
+        self.assertEqual(score_route(r, 'employment', DAY)['E'], 84.44)
+        self.assertEqual(score_route(r, 'project', DAY)['P'], 90)
+        self.assertEqual(score_route(r, 'employment', DAY)['B'], 87.22)
 
-    def test_both_unknown_cap(self):
+    def test_unknown_budget_cap_with_legacy_geography(self):
         r = route()
-        for g in ('geography', 'budget'):
-            r['gates'][g]['state'] = 'unknown'
+        r['gates']['budget']['state'] = 'unknown'
+        r['gates']['geography'] = {'state': 'unknown'}
         s = score_route(r, 'employment', DAY)
-        self.assertEqual((s['effective_priority'], s['effort']), (49, 'L1'))
+        self.assertEqual((s['effective_priority'], s['effort']), (59, 'L1'))
 
-    def test_one_unknown_cap(self):
+    def test_legacy_geography_cannot_reject_or_change_score(self):
         r = route()
-        r['gates']['geography']['state'] = 'unknown'
-        self.assertEqual(score_route(r, 'employment', DAY)['effective_priority'], 59)
+        r['gates']['geography'] = {'state': 'reject', 'evidence': EVIDENCE}
+        r['ratings']['geography'] = {'value': 999}
+        self.assertEqual(score_route(r, 'employment', DAY)['effective_priority'], 100)
+        self.assertEqual(score_route(r, 'employment', DAY)['state'], 'qualified')
+
+    def test_blank_cards_and_prompts_exclude_geography_checks(self):
+        c = blank_card(screen(COMPANY))
+        self.assertNotIn('geography', c['routes']['employment']['gates'])
+        self.assertNotIn('geography', c['routes']['employment']['ratings'])
+        self.assertNotIn('Pakistan', research_packet(screen(COMPANY)))
 
     def test_need_cap(self):
         r = route()
@@ -106,13 +114,13 @@ class QualificationTests(unittest.TestCase):
 
     def test_hard_reject_beats_score(self):
         r = route()
-        r['gates']['geography']['state'] = 'reject'
+        r['gates']['budget']['state'] = 'reject'
         self.assertEqual(score_route(r, 'employment', DAY)['effective_priority'], 0)
 
     def test_project_is_not_fallback_by_default(self):
         c = blank_card(screen(COMPANY))
         c['routes']['employment'] = route()
-        c['routes']['employment']['gates']['geography']['state'] = 'reject'
+        c['routes']['employment']['gates']['budget']['state'] = 'reject'
         e = evaluate(c, DAY)
         self.assertEqual(e['routes']['project']['state'], 'qualify-first')
         self.assertEqual(e['stage'], 'Qualify-first')
@@ -129,8 +137,8 @@ class QualificationTests(unittest.TestCase):
 
     def test_unsupported_pass_downgraded(self):
         r = route()
-        r['gates']['geography']['evidence'] = {}
-        self.assertEqual(score_route(r, 'employment', DAY)['gates']['geography'], 'unknown')
+        r['gates']['budget']['evidence'] = {}
+        self.assertEqual(score_route(r, 'employment', DAY)['gates']['budget'], 'unknown')
 
     def test_penalties_not_duplicated(self):
         r = route()

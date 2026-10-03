@@ -6,10 +6,10 @@ import re
 from urllib.parse import urlparse
 
 WEIGHTS = dict(zip(
-    ('severity', 'match', 'proof', 'urgency', 'access', 'budget', 'geography',
+    ('severity', 'match', 'proof', 'urgency', 'access', 'budget',
      'role', 'project', 'differentiation', 'competition', 'upside', 'efficiency'),
-    (12, 10, 10, 10, 8, 10, 10, 5, 5, 5, 4, 4, 7)))
-GATES = ('geography', 'budget', 'need', 'authority', 'timing', 'depth', 'reviewer', 'ip')
+    (12, 10, 10, 10, 8, 10, 5, 5, 5, 4, 4, 7)))
+GATES = ( 'budget', 'need', 'authority', 'timing', 'depth', 'reviewer', 'ip')
 PENALTIES = {'decision_31_60_days': 15, 'missing_reviewer': 10,
              'stale_signal': 8, 'undefined_acceptance': 10, 'unsponsored_proof': 5}
 LANES = {
@@ -27,7 +27,7 @@ SPECIALIST = ('robotics', 'robots', 'semiconductor', 'cybersecurity', 'security 
               'gpu infrastructure', 'defense', 'drug discovery')
 PROFILE = {
     'positioning': 'Product Engineer for B2B workflows',
-    'country': 'Pakistan', 'max_team_size': 5, 'min_batch_year': 2025,
+    'max_team_size': 5, 'min_batch_year': 2025,
     'max_batch_year': 2026,
     'effort_split': {'employment': 70, 'project': 30},
     'proof': 'Public product-story work and bounded workflow implementation experience; AI-assisted engineering.',
@@ -175,14 +175,16 @@ def score_route(route, route_name, as_of=None):
     common = sum(w * ratings[k] / 4 for k, w in WEIGHTS.items() if k not in ('role', 'project'))
     base = common + 5 * ratings['role'] / 4 + 5 * ratings['project'] / 4
     raw = common + 10 * ratings['role' if route_name == 'employment' else 'project'] / 4
+    # Geography is excluded. Preserve relative weights and normalize the remaining 90 points.
+    scale = 100 / sum(WEIGHTS.values())
+    base *= scale
+    raw *= scale
     penalties = set(route.get('penalties', []))
     if penalties - PENALTIES.keys():
         raise ValueError('Unknown penalty')
     penalty = sum(PENALTIES[k] for k in penalties)
     caps = []
-    if gates['budget'] == 'unknown' and gates['geography'] == 'unknown':
-        caps.append(49)
-    elif 'unknown' in (gates['budget'], gates['geography']):
+    if gates['budget'] == 'unknown':
         caps.append(59)
     if gates['need'] != 'pass':
         caps.append(54)
@@ -229,16 +231,16 @@ def research_packet(c, profile=None):
     return '\n'.join([
         '# Research ' + c['name'],
         'Goal: paid remote product-area role or bounded project. Effort: 70% employment / 30% projects.',
-        'Country: ' + p['country'] + '. Positioning: ' + p['positioning'],
+        'Positioning: ' + p['positioning'],
         'Permitted experience context: ' + p['proof'],
-        'Directory facts are discovery leads, not current verified need, headcount or eligibility.',
+        'Directory facts are discovery leads, not current verified need, headcount.',
         'Use original company product, pricing, docs, changelog, careers and founder posts. No contacting or account creation.',
         'Record claim, source URL, publication date, event date and checked_at separately. Source checks must be current.',
-        'Read the live listing. Remote/EMEA/funding never proves Pakistan eligibility or allocated budget.',
+        'Read the live listing. Record location and work arrangement as context only; geography is not a qualification or scoring criterion. Funding never proves allocated budget.',
         'Check what already ships and who owns it. Public absence is not a missing-feature finding.',
         'Produce one observed condition, hypothesis, alternative explanation and falsification question.',
-        'Evaluate geography, budget, need, authority, timing, depth/reviewer and IP independently for EACH route.',
-        'A restricted vacancy cannot become a project by changing the label. Direct receivables work stays on hold until cleared.',
+        'Evaluate budget, need, authority, timing, depth/reviewer and IP independently for EACH route.',
+        'A project needs its own sponsor, budget and scope evidence. Direct receivables work stays on hold until cleared.',
         'Only verified public work-contact routes; never use guessed emails. Contact-page presence does not verify founder identity.',
         'Match one defensible contribution and permitted proof. ' + '; '.join(p['claim_limits']) + '.',
         'No private salary floor, employer records, proprietary architecture or private chats in the output.',
