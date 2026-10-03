@@ -33,7 +33,7 @@ const KEY='founder-pipeline-v1', $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl=s=>/^https?:\/\//i.test(s||'')?s:'';
 const date=()=>new Date().toISOString().slice(0,10);
-let workspace={companies:[],cards:{}}, active=null;
+let workspace={companies:[],cards:{}}, active=null, evaluationRequest=0;
 try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved?.companies&&saved?.cards)workspace=saved}catch{}
 const status=(msg,error=false)=>{$('status').textContent=msg;$('status').classList.toggle('error',error)};
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(workspace))}catch{status('Browser storage is full. Export your workspace now.',true)}}
@@ -45,7 +45,7 @@ function render(){
  const rows=all.filter(c=>(!state||c.screen.state===state)&&(!q||JSON.stringify([c.name,c.one_liner,c.website]).toLowerCase().includes(q)));
  $('rows').innerHTML=rows.length?rows.map(c=>`<tr><td><strong>${esc(c.name)}</strong><div class="muted">${esc(c.one_liner)}</div>${safeUrl(c.website)?`<a href="${esc(c.website)}" target="_blank" rel="noopener">${esc(c.id)}</a>`:''}</td><td>${esc(c.team_size??'Unknown')}</td><td>${esc(c.screen.lane.replaceAll('_',' '))}</td><td><span class="badge ${esc(c.screen.state)}">${esc(c.screen.state)}</span><div class="muted">${esc([...c.screen.reasons,...c.screen.holds,...c.screen.unknowns].join('; '))}</div></td><td><button data-id="${esc(c.id)}">${workspace.cards[c.id]?'Review card':'Research'}</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">No companies in this view. Screen a batch or import directory data.</td></tr>';
 }
-function show(c){active=c;$('detail').hidden=false;$('detailTitle').textContent=c.name;$('detailMeta').textContent=`${c.source} · ${c.batch||'Imported'} · ${c.screen.state} · screen checked ${c.screen.checked_at}`;$('card').value=JSON.stringify(workspace.cards[c.id]||blankCard(c),null,2);$('contacts').textContent='';$('cardStatus').textContent='';$('evaluation').textContent='Add original sources and current checks. Unknown gates remain unknown.';$('draft').textContent='No reviewed draft yet.';$('copyDraft').disabled=true;$('enrich').disabled=c.screen.state!=='research'||!c.slug;$('detail').scrollIntoView({behavior:'smooth',block:'start'})}
+function show(c){evaluationRequest++;active=c;$('detail').hidden=false;$('detailTitle').textContent=c.name;$('detailMeta').textContent=`${c.source} · ${c.batch||'Imported'} · ${c.screen.state} · screen checked ${c.screen.checked_at}`;$('card').value=JSON.stringify(workspace.cards[c.id]||blankCard(c),null,2);$('contacts').textContent='';$('cardStatus').textContent='';$('evaluation').textContent='Add original sources and current checks. Unknown gates remain unknown.';$('draft').textContent='No reviewed draft yet.';$('copyDraft').disabled=true;$('enrich').disabled=c.screen.state!=='research'||!c.slug;$('detail').scrollIntoView({behavior:'smooth',block:'start'})}
 async function serverEvaluate(card){
  // The same stateless validator runs locally and as a serverless function.
  const r=await fetch('/api/evaluate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(card)});
@@ -57,14 +57,33 @@ function blankCard(c){return {company_id:c.id,company:c.name,researched_at:date(
 function packet(c){return `Research ${c.name} for a Pakistan-based Product Engineer for B2B workflows. Prioritize paid product-area roles (70% effort) and scoped projects (30%).\n\nUse original current sources: careers, product, docs, changelog, pricing, founder posts. Directory matching is discovery only. Check actual team, already-shipped features and existing owners. Remote/EMEA/funding does not prove Pakistan eligibility or allocated budget. Record claim, original URL, publication/event/check dates separately. Never infer missing features from public absence. Separate employment and project feasibility; do not relabel a restricted job a project. Direct receivables work stays held until IP clearance.\n\nProduce an observed condition, hypothesis, alternative explanation, falsification question, one matched contribution and permitted proof. Do not claim measured business gains, sole authorship, senior backend depth or production AI expertise. No private employer materials, salary floor or unconsented references. Contact via verified public work channels only; guessed emails are excluded. Start with a 15-minute qualification screen and stop at hard blockers. No sending or custom implementation.\n\nReturn completed card JSON. Evidence: {"claim":"exact sourced fact","url":"https://original-source","checked_at":"YYYY-MM-DD","published_at":null,"event_at":null}. Gate states: pass/reject/unknown. Ratings: 0–4 with rationale and evidence, unknown=1.\n\nCompany:\n${JSON.stringify({id:c.id,name:c.name,website:c.website,yc_url:c.yc_url,one_liner:c.one_liner,description:c.description,team_size:c.team_size,batch:c.batch,screen:c.screen},null,2)}\n\nCard:\n${JSON.stringify(blankCard(c),null,2)}`}
 $('load').onclick=async()=>{const b=$('batch').value;if(!b)return;$('load').disabled=true;status('Screening directory data before founder enrichment…');try{const rows=await api({action:'screen',batch:b});const map=new Map(workspace.companies.map(c=>[c.id,c]));rows.forEach(c=>map.set(c.id,c));workspace.companies=[...map.values()];persist();render();status(`Screened ${rows.length} companies. Research candidates still require live need and country checks.`)}catch(e){status(e.message,true)}finally{$('load').disabled=false}};
 $('rows').onclick=e=>{const b=e.target.closest('[data-id]');if(b)show(workspace.companies.find(c=>c.id===b.dataset.id))};
-$('q').oninput=render;$('state').onchange=render;$('close').onclick=()=>{$('detail').hidden=true};
+$('q').oninput=render;$('state').onchange=render;$('close').onclick=()=>{evaluationRequest++;$('detail').hidden=true};
 $('import').onclick=()=>$('file').click();
 $('file').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(data.companies&&data.cards){if(!Array.isArray(data.companies)||!data.companies.every(c=>c.id&&c.screen))throw Error('Invalid workspace');workspace=data}else if(Array.isArray(data)&&data.every(c=>c.id&&c.screen)){const map=new Map(workspace.companies.map(c=>[c.id,c]));data.forEach(c=>map.set(c.id,c));workspace.companies=[...map.values()]}else if(Array.isArray(data)&&data.every(c=>c.company_id)){data.forEach(c=>workspace.cards[c.company_id]=c)}else throw Error('Import companies.json, cards.json or a workspace export. Raw imports: run pipeline.py screen --input first.');persist();render();status('Imported workspace data.')}catch(e){status(e.message,true)}finally{e.target.value=''}};
 $('export').onclick=()=>download(`founder-workspace-${date()}.json`,JSON.stringify(workspace,null,2));
 $('packets').onclick=()=>download(`research-packets-${date()}.json`,JSON.stringify(workspace.companies.filter(c=>c.screen.state==='research').map(c=>({company_id:c.id,prompt:packet(c)})),null,2));
 $('packet').onclick=async()=>{try{await navigator.clipboard.writeText(packet(active));$('cardStatus').textContent='Research prompt copied.'}catch(e){$('cardStatus').textContent='Clipboard unavailable. Export the research packets.'}};
 $('enrich').onclick=async()=>{const c=active;$('enrich').disabled=true;$('contacts').textContent='Loading founder profiles…';try{const [r]=await api({action:'profiles',slugs:c.slug});if(r.error)throw Error(r.error);c.founders=r.founders;c.contact_checked_at=date();persist();if(active.id!==c.id)return;$('contacts').replaceChildren();for(const f of r.founders||[]){const line=document.createElement('p');line.textContent=f.name+(f.title?' · '+f.title:'');for(const [label,u] of [['LinkedIn',f.linkedin],['X',f.twitter]])if(safeUrl(u)){const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.textContent=' '+label;line.append(a)}$('contacts').append(line)}$('contacts').append(document.createTextNode('Confirm hiring authority and the intended contact channel. No guessed emails are used.'))}catch(e){if(active.id===c.id)$('contacts').textContent=e.message}finally{if(active.id===c.id)$('enrich').disabled=false}};
-$('saveCard').onclick=async()=>{try{const card=JSON.parse($('card').value);if(card.company_id!==active.id)throw Error('Card belongs to another company');workspace.cards[active.id]=card;persist();render();const result=await serverEvaluate(card);$('evaluation').textContent=JSON.stringify(result,null,2);$('draft').textContent=result.draft_ready?`${card.draft.subject}\n\n${card.draft.body}`:'Draft held. Complete card fields, verify the contact, recheck sources within 48h and complete claim review.';$('copyDraft').disabled=!result.draft_ready;$('cardStatus').textContent='Saved and evaluated. Nothing sent.'}catch(e){$('cardStatus').textContent=e.message;$('copyDraft').disabled=true}};
+$('saveCard').onclick=async()=>{
+ const companyId=active.id, request=++evaluationRequest;
+ const isCurrent=()=>active.id===companyId&&request===evaluationRequest&&!$('detail').hidden;
+ $('copyDraft').disabled=true;
+ try{
+  const card=JSON.parse($('card').value);
+  if(card.company_id!==companyId)throw Error('Card belongs to another company');
+  workspace.cards[companyId]=card;persist();render();
+  const result=await serverEvaluate(card);
+  // Switching panels or starting another save invalidates both successes and errors.
+  if(!isCurrent())return;
+  $('evaluation').textContent=JSON.stringify(result,null,2);
+  $('draft').textContent=result.draft_ready?`${card.draft.subject}\n\n${card.draft.body}`:'Draft held. Complete card fields, verify the contact, recheck sources within 48h and complete claim review.';
+  $('copyDraft').disabled=!result.draft_ready;
+  $('cardStatus').textContent='Saved and evaluated. Nothing sent.';
+ }catch(e){
+  if(!isCurrent())return;
+  $('cardStatus').textContent=e.message;$('copyDraft').disabled=true;
+ }
+};
 $('copyDraft').onclick=()=>navigator.clipboard.writeText($('draft').textContent);
 render();
 api({action:'batches'}).then(bs=>{$('batch').innerHTML=bs.filter(b=>/202[56]/.test(b.batch)).map(b=>`<option value="${esc(b.batch)}">${esc(b.batch)} (${b.count})</option>`).join('');$('load').disabled=false}).catch(e=>{$('batch').innerHTML='<option value="">YC currently unavailable</option>';status('YC lookup failed: '+e.message+'. Imports and existing workspace remain available.',true)});
